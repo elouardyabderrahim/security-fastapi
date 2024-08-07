@@ -6,6 +6,28 @@ from fastapi.security import OAuth2PasswordBearer
 
 from pydantic import BaseModel
 
+
+#PassLib is a great Python package to handle password hashes.
+from passlib.context import CryptContext
+
+SECRET_KEY = "ce041b943239ce78556eafab5766c2d8c107d5b96dd237696cb6cdd0be5671b0"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
+        "disabled": False,
+    }
+}
+
+
+
+
 app=FastAPI()
 
 
