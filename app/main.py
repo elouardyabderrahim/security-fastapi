@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from typing import Annotated
 
 from fastapi.security import OAuth2PasswordBearer
-
+from schemas import UserInDB
 
 
 
@@ -26,6 +26,15 @@ fake_users_db = {
 
 # Create a PassLib "context". This is what will be used to hash and verify passwords.
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+OAuth2_scheme=OAuth2PasswordBearer(tokenUrl='token')
+# Here tokenUrl="token" refers to a relative URL token that we haven't created yet. 
+# As it's a relative URL, it's equivalent to ./token.
+# Because we are using a relative URL, if your API was located at https://example.com/,
+#  then it would refer to https://example.com/token.
+app=FastAPI()
+
+
+
 
 
 def verify_password(plain_password,hashed_password):
@@ -37,34 +46,17 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-
-app=FastAPI()
-
-
-
-OAuth2_scheme=OAuth2PasswordBearer(tokenUrl='token')
-# Here tokenUrl="token" refers to a relative URL token that we haven't created yet. 
-# As it's a relative URL, it's equivalent to ./token.
-# Because we are using a relative URL, if your API was located at https://example.com/,
-#  then it would refer to https://example.com/token.
-
-
-
-
-def fake_decode_token(token):
-    return User(
-        username=token +"fake_decoded",
-        email="john@example.com",
-        full_name="John Doe"
-
-    )
+def get_user(db,username:str):
+    if username in db:
+        user_dict=db[username]
+        return UserInDB(**user_dict)
 
 print(OAuth2_scheme.__dict__)
 
-async def get_correct_user(token : Annotated [str,Depends(OAuth2_scheme)]):
-    
-    user=fake_decode_token(token)
-    return user
+
+
+
+
 
 
 @app.get("/user/me")
