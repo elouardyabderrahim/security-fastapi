@@ -1,0 +1,5 @@
+fastapi
+pyjwt
+passlib[bcrypt]
+#PassLib is a great Python package to handle password hashes.
+
